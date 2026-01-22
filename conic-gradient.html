@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>流动渐变边框效果</title>
+  <style>
+    /* 1. 定义一个自定义属性 --angle，用于控制渐变旋转的角度 */
+    @property --angle {
+      syntax: '<angle>';
+      initial-value: 0deg;
+      inherits: false;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-color: #f0f2f5;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    /* 卡片容器 */
+    .card {
+      /* 相对定位，为了让伪元素绝对定位参考 */
+      position: relative;
+      width: 300px;
+      height: 240px;
+      /* 这里的背景色是卡片内容的背景色 */
+      background: #ffffff; 
+      border-radius: 20px;
+      padding: 20px;
+      box-sizing: border-box;
+      
+      /* 阴影让卡片更有立体感 */
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* 核心：创建流动边框 */
+    .card::after, .card::before {
+      content: '';
+      position: absolute;
+      /* inset: -3px 代表向外扩张 3px，这决定了边框的粗细 */
+      inset: -5px; 
+      z-index: -1; /* 放在卡片内容后面 */
+      
+      /* 使用圆锥渐变，颜色取自图中的 紫 -> 蓝 -> 绿 -> 黄 -> 紫 */
+      background: conic-gradient(
+        from var(--angle), 
+        #a855f7, 
+        #3b82f6, 
+        #06b6d4, 
+        #10b981, 
+        #eab308, 
+        #a855f7
+      );
+      
+      border-radius: 22px; /* 比父元素稍大一点的圆角 */
+      
+      /* 应用动画 */
+      animation: spin 3s linear infinite;
+    }
+
+    /* 可选：添加一个模糊的辉光效果，让边框看起来在发光 */
+    .card::before {
+      filter: blur(15px);
+      opacity: 0.5;
+    }
+
+    /* 动画定义：旋转角度从 0 到 360 */
+    @keyframes spin {
+      from {
+        --angle: 0deg;
+      }
+      to {
+        --angle: 360deg;
+      }
+    }
+    h3 { margin: 0 0 5px 0; font-size: 18px; }
+    p { margin: 0; font-size: 14px; color: #374151; }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+  </div>
+
+</body>
+</html>
+
+<!-- 兼容性版本 -->
+<!-- <!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<style>
+  body {
+    background-color: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  /* 容器：必须限制溢出，否则旋转的伪元素会挡住外面 */
+  .card {
+    position: relative;
+    width: 300px;
+    height: 240px;
+    background: #fff; /* 这里是兜底背景 */
+    border-radius: 20px;
+    overflow: hidden; /* 关键：裁剪超出部分 */
+    
+    /* 内容布局 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 0; /* 建立层叠上下文 */
+  }
+  .card::before {
+    filter: blur(15px);
+  }
+  /* 1. 旋转的彩色背景层 */
+  .card::before {
+    content: '';
+    position: absolute;
+    z-index: -2; /* 最底层 */
+    
+    /* 核心技巧：让它比容器大很多，确保旋转时能覆盖住容器的四个角 */
+    left: -50%;
+    top: -50%;
+    width: 200%;
+    height: 200%;
+    
+    /* 颜色：依然使用圆锥渐变 */
+    background: conic-gradient(
+      #a855f7, 
+      #3b82f6,
+      #06b6d4,
+      #10b981,
+      #eab308,
+      #a855f7
+    );
+    
+    /* 动画：直接旋转这个巨大的伪元素 */
+    animation: rotate 4s linear infinite;
+  }
+
+  /* 2. 遮挡层：用来模拟卡片内部背景，从而形成“边框”效果 */
+  .card::after {
+    content: '';
+    position: absolute;
+    z-index: -1; /* 在旋转层之上，内容之下 */
+    
+    /* inset 决定边框粗细，这里是 3px */
+    left: 3px;
+    top: 3px;
+    right: 3px;
+    bottom: 3px;
+    
+    background: #fff; /* 卡片实际背景色 */
+    border-radius: 17px; /* 需要手动计算：父元素圆角 - 边框宽度 */
+  }
+
+  @keyframes rotate {
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* 文字样式（随意） */
+  h2 { z-index: 1; margin: 0; }
+
+</style>
+</head>
+<body>
+
+  <div class="card">
+    <h2>兼容版流动边框</h2>
+  </div>
+
+</body>
+</html> -->
