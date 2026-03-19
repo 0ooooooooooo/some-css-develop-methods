@@ -1,49 +1,117 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>CSS Grid 命名区域演示</title>
     <style>
-        #page {
-            display: grid; /* 1.设置 display 为 grid */
-            width: 100%;
-            height: 250px;
-            grid-template-areas:
-                "head head"
-                "nav  main"
-                "nav  foot"; /* 2.区域划分 当前为 三行 两列 */
-            grid-template-rows: 50px 1fr 30px; /* 3.各区域 宽高设置 */
-            grid-template-columns: 150px 1fr;
+        /* 1. 基础样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        #page > header {
-            grid-area: head; /* 4. 指定当前元素所在的区域位置，从 grid-template-areas 选取值 */
-            background-color: #8ca0ff;
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            padding: 20px;
         }
 
-        #page > nav {
-            grid-area: nav; /* 4. 指定当前元素所在的区域位置，从 grid-template-areas 选取值 */
-            background-color: #ffa08c;
+        /* 2. Grid 容器设置 */
+        .container {
+            display: grid;
+            gap: 15px;
+            /* 使用 repeat 创建 12 等分列 */
+            grid-template-columns: repeat(12, 1fr);
+            /* 定义行高：页眉 80px, 内容自适应(最小400px), 页脚 60px */
+            grid-template-rows: 80px minmax(400px, auto) 60px;
+
+            /* 定义 12 列的地图布局 */
+            /* 这里的名字即为 <custom-ident> */
+            grid-template-areas: 
+                "head head head head head head head head head head head head"
+                "side side side main main main main main main main main main"
+                "foot foot foot foot foot foot foot foot foot foot foot foot";
         }
 
-        #page > main {
-            grid-area: main; /* 4. 指定当前元素所在的区域位置，从 grid-template-areas 选取值 */
-            background-color: #ffff64;
+        /* 3. 子元素关联区域 */
+        .header {
+            grid-area: head;
+            background-color: #1a73e8;
+            color: white;
         }
 
-        #page > footer {
-            grid-area: foot; /* 4. 指定当前元素所在的区域位置，从 grid-template-areas 选取值 */
-            background-color: #8cffa0;
+        .sidebar {
+            grid-area: side;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+        }
+
+        .content {
+            grid-area: main;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            padding: 20px;
+        }
+
+        .footer {
+            grid-area: foot;
+            background-color: #3c4043;
+            color: white;
+        }
+
+        /* 4. 响应式处理：手机端变为单列垂直堆叠 */
+        @media (max-width: 768px) {
+            .container {
+                /* 手机端不再需要 12 列，改为 1 列 */
+                grid-template-columns: 1fr;
+                grid-template-rows: auto;
+                
+                /* 重新“画地图”，让它们按顺序排队 */
+                grid-template-areas: 
+                    "head"
+                    "main"
+                    "side"
+                    "foot";
+            }
+            
+            .sidebar {
+                min-height: 150px;
+            }
+        }
+
+        /* 辅助性装饰样式 */
+        .container > div {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
-    <section id="page">
-        <header>Header</header>
-        <nav>Navigation</nav>
-        <main>Main area</main>
-        <footer>Footer</footer>
-    </section>
+
+    <div class="container">
+        <header class="header">页眉 (12/12)</header>
+        
+        <aside class="sidebar">
+            侧边栏 (3/12)
+        </aside>
+        
+        <main class="content">
+            <div style="text-align: center;">
+                <h2>主要内容区域 (9/12)</h2>
+                <p style="font-weight: normal; margin-top: 10px; color: #666;">
+                    基于 grid-template-areas 的 12 列栅格系统
+                </p>
+            </div>
+        </main>
+        
+        <footer class="footer">页脚 (12/12)</footer>
+    </div>
+
 </body>
 </html>
